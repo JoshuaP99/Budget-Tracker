@@ -1,11 +1,11 @@
 class Budget {
     constructor(name){
         this.name = name;
-        this.bills = [];
+        this.bill = [];
     }
 
     addBill(name, amount){
-        this.bills.push(new Bill(name, amount))
+        this.bill.push(new Bill(name, amount))
     }
 }
 
@@ -18,34 +18,34 @@ class Bill {
 
 
 class BudgetService {
-    static url = "https://ancient-taiga-31359.herokuapp.com/api/houses";
+    static url = "https://crudcrud.com/api/c98a96280df949e4b5cf10f93f7478e1";
 
-    static getAllBudgets(){
-        return $.get(this.url)
+    static getAllBudgets() {         
+        return $.get(this.url);
     }
 
-    static getBudget(id){
+    static getBudgets(id) {         
         return $.get(this.url + `/${id}`);
     }
 
-    static createBudget(budget){
-        return $.post(this.url, budget)
+    static createBudget(budget) {    
+        return $.post(this.url, budget);
     }
 
-    static updateBudget(budget){
-        return $.ajax({
-            url: this.url + `/${budget._id}`,
-            dataType: 'json',
-            data: JSON.stringify(budget),
+    static updateBudget(budget) {     
+        return $.ajax({   
+            url: this.url + `/${budget._id}`,   
+            dataType: 'json',   
+            data: JSON.stringify(budget), 
             contentType: 'application/json',
-            type: 'PUT'
+            type: 'PUT' 
         });
     }
-    
-    static deleteBudget(id){
+
+    static deleteBudget(id) {
         return $.ajax({
-            url: this.url + `/${id}`,
-            type: 'DELETE'
+            url: this.url + `/${id}`, 
+            type: 'DELETE'  
         });
     }
 }
@@ -54,7 +54,8 @@ class DOMManager {
     static budgets;
     
     static getAllBudgets(){
-        BudgetService.getAllBudgets().then(budgets => this.render(budgets))
+        BudgetService.getAllBudgets().then(budgets => this.render(budgets) );
+        
     }
     
     static createBudget(name){
@@ -62,41 +63,42 @@ class DOMManager {
             .then(() => {
                 return BudgetService.getAllBudgets();
             })
-            .then((budgets) => this.render(budgets))
+            .then((budgets) => this.render(budgets));
     }
         
     static deleteBudget(id){
         BudgetService.deleteBudget(id)
             .then(() => {
-                return BudgetService.getAllBudgets()
+                return BudgetService.getAllBudgets();
             })
-            .then((budgets) => this.render (budgets))
+            .then((budgets) => this.render(budgets));
     }
 
-    static addBill(id){
-            for (let budget of this.budgets) {
-                if (budget._id == id) {
-                    budget.bills.push(new Bill($(`#${budget._id}-bill-name`).val(), $(`#${budget._id}-bill-amount`).val()))
-                    BudgetService.updateBudget(budget)
-                        .then(() => {
-                            return BudgetService.getAllBudgets()
-                        })
-                        .then((budgets) => this.render(budgets))
-                }
+    static addBill(id) {
+       // console.log(this.budgets)
+        for (let budget of this.budgets) {
+            if (budget._id == id) {
+                budget.bill.push(new Budget($(`#${budget._id}-bill-name`).val(), $(`#${budget._id}-bill-amount`).val()));
+                BudgetService.updateBudget(budget)
+                    .then(() => {
+                        return BudgetService.getAllBudgets();
+                    })
+                    .then((budgets) => this.render(budgets));
             }
         }
+    }
 
     static deleteBudget(budgetId, billId) {
         for (let budget of this.budgets) {
             if (budget._id == budgetId) {
                 for (let bill of budget.bills) {
                     if (bill._id == billId) {
-                        budget.bills.splice(budget.bills.indexOf(bill), 1);
+                        budget.bills.splice(budget.bill.indexOf(bill), 1);
                         BudgetService.updateBudget(budget)
                             .then(() => {
                                 return BudgetService.getAllBudgets();
                             })
-                            .then((budgets) => this.render(budgets))
+                            .then((budgets) => this.render(budgets));
                     }
                 }
             }
@@ -105,13 +107,14 @@ class DOMManager {
 
     static render(budgets){
         this.budgets = budgets;
-        $('#app').empty();
+        console.log(this.budgets);
+        $(`#app`).empty();
         for (let budget of budgets) {
-            $('#app').prepend(
+            $(`#app`).prepend(
                 `<div id="${budget._id}" class="card">
                     <div class="card-header">
                         <h2>${budget.name}</h2>
-                        <button class="btn btn-dark" onclick="DOMManager.deleteBudget('${budget.id}')">Delete</button>
+                        <button class="btn btn-dark" onclick="DOMManager.deleteBudget('${budget._id}')">Delete</button>
                     </div>
                     <div class="card-body">
                         <div class="card">
@@ -123,12 +126,14 @@ class DOMManager {
                                     <input type="text" id="${budget._id}-bill-amount" class ="form-control" placeholder="Bill Amount">
                                 </div>
                             </div>
-                            <button id="${budget._id}-new-bill" onclick="DOMManager.addBill('${house._id}')" class="btn btn-primary form-control"></button>
+                            <button id="${budget._id}-new-bill" onclick="DOMManager.addBill('${budget._id}')" class="btn btn-primary form-control">Add Bill</button>
                         </div>
                     </div>
                 </div><br>`
             );
-            for (let bill of budget.bills) {
+            
+            console.log(budget.bills)
+            for (let room of budget.bills) {
                 $(`#${budget._id}`).find('.card-body').append(
                     `<p>
                         <span id="name-${bill._id}"><strong>Name: </strong> ${bill.name}</span>
@@ -140,9 +145,9 @@ class DOMManager {
     }
 }
 
-$(`#create-new-budget`).click(() =>{
-    DOMManager.createBudget($(`#new-budget-name`).val());
-    $(`#new-budget-name`).val('');
+$("#create-new-budget").click(() =>{
+    DOMManager.createBudget($('#new-budget-name').val());
+    $("#new-budget-name").val('');
 });
 
 DOMManager.getAllBudgets();
