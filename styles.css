@@ -1,0 +1,24 @@
+.container {
+    background-color: rgb(31, 31, 31);
+}
+
+.primary-button{
+    background-color: rgb(117, 4, 4);
+    color: white;
+}
+
+.div-card{
+    padding: 2rem 1rem;
+    margin-bottom: 2rem;
+    margin-top: 2rem;
+    background-color: #858585;
+    border-radius: .3rem;
+}
+
+.card-body{
+    background-color: #d1d1d1;
+}
+
+.card {
+    background-color: rgb(36, 36, 36);
+}
