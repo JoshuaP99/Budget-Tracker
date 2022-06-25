@@ -1,24 +1,34 @@
+//These two classes are pretty standard
+//The budget is the overall and the bill 
+//is what will be appended into the room array
+//The addBill method also exists here and will be 
+//invoked in the DOMManager
+
 class Budget {
     constructor(name){
         this.name = name;
-        this.bill = [];
+        this.room = [];
     }
 
     addBill(name, amount){
-        this.bill.push(new Bill(name, amount))
+        this.room.push(new Bill(name, amount))
     }
 }
 
 class Bill {
     constructor(name, amount){
         this.name = name
-        this.amount = amount
+        this.area = amount
     }
 }
 
 
 class BudgetService {
-    static url = "https://crudcrud.com/api/c98a96280df949e4b5cf10f93f7478e1";
+    
+    //This API is from this weeks video meaning that anyone who uses it will also have their info here
+    //The API is built for the houses functions but I went through and reqrote as much as possible
+    //To keep my code to interact with the API
+    static url = "https://ancient-taiga-31359.herokuapp.com/api/houses";
 
     static getAllBudgets() {         
         return $.get(this.url);
@@ -51,6 +61,10 @@ class BudgetService {
 }
 
 class DOMManager {
+    
+    //The methods for all the elements in the render exist here
+    //Each one of the methods here exist in the HTML and the buttons invoke
+    //one of the methods here in the DOMManager
     static budgets;
     
     static getAllBudgets(){
@@ -75,10 +89,9 @@ class DOMManager {
     }
 
     static addBill(id) {
-       // console.log(this.budgets)
         for (let budget of this.budgets) {
             if (budget._id == id) {
-                budget.bill.push(new Budget($(`#${budget._id}-bill-name`).val(), $(`#${budget._id}-bill-amount`).val()));
+                budget.rooms.push(new Bill($(`#${budget._id}-room-name`).val(), $(`#${budget._id}-room-area`).val()));
                 BudgetService.updateBudget(budget)
                     .then(() => {
                         return BudgetService.getAllBudgets();
@@ -88,12 +101,12 @@ class DOMManager {
         }
     }
 
-    static deleteBudget(budgetId, billId) {
+    static deleteBill(budgetId, roomId) {
         for (let budget of this.budgets) {
             if (budget._id == budgetId) {
-                for (let bill of budget.bills) {
-                    if (bill._id == billId) {
-                        budget.bills.splice(budget.bill.indexOf(bill), 1);
+                for (let room of budget.rooms) {
+                    if (room._id == roomId) {
+                        budget.rooms.splice(budget.rooms.indexOf(room), 1);
                         BudgetService.updateBudget(budget)
                             .then(() => {
                                 return BudgetService.getAllBudgets();
@@ -105,6 +118,9 @@ class DOMManager {
         }
     }
 
+    //This method will allow for all the other HTML functions to live that have been 
+    //called out in the DOMManager
+    //The method exists of HTML that will be prepended to the div with app class
     static render(budgets){
         this.budgets = budgets;
         console.log(this.budgets);
@@ -120,10 +136,10 @@ class DOMManager {
                         <div class="card">
                             <div class="row">
                                 <div class="col-sm">
-                                    <input type="text" id="${budget._id}-bill-name" class ="form-control" placeholder="Bill Name">
+                                    <input type="text" id="${budget._id}-room-name" class ="form-control" placeholder="Bill Name">
                                 </div>
                                 <div class="col-sm">
-                                    <input type="text" id="${budget._id}-bill-amount" class ="form-control" placeholder="Bill Amount">
+                                    <input type="text" id="${budget._id}-room-area" class ="form-control" placeholder="Bill Amount">
                                 </div>
                             </div>
                             <button id="${budget._id}-new-bill" onclick="DOMManager.addBill('${budget._id}')" class="btn btn-primary form-control">Add Bill</button>
@@ -131,20 +147,21 @@ class DOMManager {
                     </div>
                 </div><br>`
             );
-            
-            console.log(budget.bills)
-            for (let room of budget.bills) {
+
+            for (let room of budget.rooms) {
                 $(`#${budget._id}`).find('.card-body').append(
                     `<p>
-                        <span id="name-${bill._id}"><strong>Name: </strong> ${bill.name}</span>
-                        <span id="name-${bill._id}"><strong>Amount: </strong> ${bill.amount}</span>
-                        <button class="btn btn-danger" onclick="DOMManager.deleteBill('${budget._id}', '${bill._id}')">Delete Bill</button>`
+                        <span id="name-${room._id}"><strong>Name: </strong> ${room.name}</span>
+                        <span id="name-${room._id}"><strong>Amount: </strong> ${room.area}</span>
+                        <button class="btn btn-danger" onclick="DOMManager.deleteBill('${budget._id}', '${room._id}')">Delete Bill</button>`
                 );
             }
         }
     }
 }
 
+//This method will allow for the creation of a budget for the API
+//This is the function for the button for the first part of the HTML
 $("#create-new-budget").click(() =>{
     DOMManager.createBudget($('#new-budget-name').val());
     $("#new-budget-name").val('');

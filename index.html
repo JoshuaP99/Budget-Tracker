@@ -1,4 +1,3 @@
-Access-Control-Allow-Origin: "https://crudcrud.com/api/c98a96280df949e4b5cf10f93f7478e1"
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,12 +10,19 @@ Access-Control-Allow-Origin: "https://crudcrud.com/api/c98a96280df949e4b5cf10f93
 </head>
 
 <body class="container">
+    
+    <!--This is the starter div that will hold the functions to create a budget.
+    The addBudget function towards the end of the JavaScript is what will make this
+    button push a new budget-->
     <div id="new-house" class="div-card">
         <h2>New Budget</h2>
-        <input type="text" id="new-budget-name" class="form-control"> <br>
+        <input type="text" id="new-budget-name" class="form-control" placeholder="Enter new budget..."><br>
         <button id="create-new-budget" class="btn primary-button form-control">Create</button> 
     </div>
     
+    <!--This is the div where all the info from our jQuery method will be prepended
+    This will invoke all the methods created in the DOMManager that will be used to 
+    create the rows that holld bills and their information-->
     <div id="app">
 
     </div>
